@@ -1,0 +1,27 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: reactify
+    entrypoint: sh entrypoint.dev.sh
+    volumes:
+      - .:/app  # Mount the current directory
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env  # Load environment variables from .env file
+    depends_on:
+      - database
+
+  database:
+    image: postgres:16.0
+    restart: unless-stopped
+    container_name: reactify_db
+    env_file:
+      - .env  # Load environment variables from .env file
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+
+volumes:
+  postgres_data:
