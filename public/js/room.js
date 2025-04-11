@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded", () => {
     } else {
       index = 0; // Reset index to loop through messages again
     }
-  }, 1000); // every second
+  }, 2000); // every 2 seconds
 
   var fullName = localStorage.getItem("fullName") || "Anonymous";
 
