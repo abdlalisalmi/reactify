@@ -5,8 +5,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const reactionButtons = document.querySelectorAll(".reaction-btn");
 
   const roomId = JSON.parse(document.getElementById("room-id").textContent);
+  const WS_PROTOCOL =
+    window.location.protocol === "https:" ? "wss://" : "ws://";
+
   const chatSocket = new WebSocket(
-    "ws://" + window.location.host + "/ws/chat/" + roomId + "/"
+    WS_PROTOCOL + window.location.host + "/ws/chat/" + roomId + "/"
   );
 
   chatSocket.onopen = function (e) {
@@ -52,15 +55,8 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   function createBubble(username, text, clickPosition = null, system = false) {
-    // if (!system) {
-    //   chatSocket.send(
-    //     JSON.stringify({
-    //       message: text,
-    //     })
-    //   );
-    // }
-
     const bubble = document.createElement("div");
+    const container = document.getElementById("bubble-container"); // Assuming container is defined elsewhere
 
     // Reactions list
     const reactions = ["❤️", "👍", "😄", "😮", "🔥", "🎉", "#Congratulations"];
@@ -107,34 +103,38 @@ document.addEventListener("DOMContentLoaded", () => {
     // First add text content
     if (isReaction) {
       bubble.innerHTML = `<div class="bubble flex justify-center items-center w-16 h-16 rounded-full text-xl ${bgColor} ${textColor} ${floatClass}">
-			${text}
-		</div>`;
+      ${text}
+    </div>`;
     } else if (text.startsWith("#")) {
       bubble.innerHTML = `<div class="bubble flex justify-center items-center rounded-xl px-3 py-1 text-sm ${bgColor} ${textColor} ${floatClass}">
-			${text}
-		</div>`;
+      ${text}
+    </div>`;
     } else {
       // For regular messages
       bubble.innerHTML = `<div class="bubble bg-white rounded-full py-3 px-4 flex items-center shadow-sm max-w-lg ${floatClass}">
-			<!-- Avatar -->
-			<div class="bg-violet-500 rounded-full w-10 h-10 flex items-center justify-center mr-3">
-				<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-				</svg>
-			</div>
-			<!-- User Info -->
-			<div class="flex flex-col">
-			<span class="font-semibold text-md text-gray-900">${username}</span>
-			<span class="text-gray-500 text-sm">${text}</span>
-			</div>
-		</div>`;
+      <!-- Avatar -->
+      <div class="bg-violet-500 rounded-full w-10 h-10 flex items-center justify-center mr-3">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+        </svg>
+      </div>
+      <!-- User Info -->
+      <div class="flex flex-col">
+      <span class="font-semibold text-md text-gray-900">${username}</span>
+      <span class="text-gray-500 text-sm">${text}</span>
+      </div>
+    </div>`;
     }
 
     // Add bubble to container
     container.appendChild(bubble);
 
-    // Random speed
-    const speed = Math.random() + 1;
+    // Calculate speed based on window size
+    // Taller windows get faster animations to maintain reasonable animation time
+    const baseSpeed = 1.5;
+    const containerHeight = container.clientHeight;
+    const speedFactor = containerHeight / 800; // Normalize based on 800px reference height
+    let speed = baseSpeed * speedFactor * (Math.random() * 0.5 + 0.75); // Add some randomness but keep within reasonable range
 
     // Starting position
     let currentY = clickPosition
@@ -144,13 +144,25 @@ document.addEventListener("DOMContentLoaded", () => {
     // Animation ID for cleanup
     let animationId;
 
-    // Simple animation function using requestAnimationFrame
-    function animateBubble() {
-      currentY += speed;
+    // Track time for smoother animation
+    let lastTimestamp = null;
+
+    // Animation function using requestAnimationFrame with timestamp
+    function animateBubble(timestamp) {
+      if (!lastTimestamp) {
+        lastTimestamp = timestamp;
+      }
+
+      // Calculate time delta for smooth animation regardless of frame rate
+      const delta = (timestamp - lastTimestamp) / 16.67; // Normalize to 60fps
+      lastTimestamp = timestamp;
+
+      // Move based on speed, time delta and window height
+      currentY += speed * delta;
       bubble.style.bottom = `${currentY}px`;
 
       // Remove bubble when it goes off the top
-      if (currentY >= container.clientHeight + size) {
+      if (currentY >= containerHeight + size) {
         bubble.remove();
         return;
       }
@@ -162,7 +174,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Start animation
     animationId = requestAnimationFrame(animateBubble);
 
-    // Fixed event listener: changed "hover" to "mouseenter"
+    // Click event to remove bubble
     bubble.addEventListener("click", (event) => {
       event.stopPropagation();
       bubble.classList.add("pop");
@@ -174,6 +186,28 @@ document.addEventListener("DOMContentLoaded", () => {
 
       setTimeout(() => bubble.remove(), 400);
     });
+
+    // Handle window resize - adjust speed for new container height
+    const handleResize = () => {
+      let newContainerHeight = container.clientHeight;
+      let newSpeedFactor = newContainerHeight / 800;
+      // Update speed based on new container height
+      speed = baseSpeed * newSpeedFactor * (Math.random() * 0.5 + 0.75);
+    };
+
+    // Add resize listener
+    window.addEventListener("resize", handleResize);
+
+    // Return a cleanup function to be called if needed
+    return () => {
+      if (animationId) {
+        cancelAnimationFrame(animationId);
+      }
+      window.removeEventListener("resize", handleResize);
+      if (bubble.parentNode) {
+        bubble.remove();
+      }
+    };
   }
 
   // Add bubble when button is clicked
