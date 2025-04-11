@@ -199,12 +199,11 @@ class ProfileAdmin(UserAdmin, ModelAdmin):
 @admin.register(ChatRoom)
 class ChatRoomAdmin(ModelAdmin):
     list_display = ("name", "created_at")
-    filter_horizontal = ("participants",)
     search_fields = ("name", "description")
 
 
 @admin.register(Message)
 class MessageAdmin(ModelAdmin):
-    list_display = ("user", "room", "content", "timestamp")
+    list_display = ("full_name", "room", "content", "timestamp")
     list_filter = ("room",)
-    search_fields = ("content", "user__username", "room__name")
+    search_fields = ("content", "full_name", "room__name")

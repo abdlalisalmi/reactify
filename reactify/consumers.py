@@ -20,8 +20,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
         await self.channel_layer.group_add(self.room_group_name, self.channel_name)
 
         # Add user to room participants if authenticated
-        if self.scope["user"].is_authenticated:
-            await self.add_user_to_room(self.scope["user"], self.room_id)
+        # if self.scope["user"].is_authenticated:
+        #     await self.add_user_to_room(self.scope["user"], self.room_id)
 
         await self.accept()
 
@@ -32,10 +32,10 @@ class ChatConsumer(AsyncWebsocketConsumer):
     async def receive(self, text_data):
         data = json.loads(text_data)
         message = data.get("message")
-        username = self.scope["user"].username
+        full_name = data.get("full_name")
 
         # Save message to database
-        db_message = await self.save_message(self.room_id, username, message)
+        db_message = await self.save_message(self.room_id, full_name, message)
 
         # Send message to room group
         await self.channel_layer.group_send(
@@ -43,16 +43,17 @@ class ChatConsumer(AsyncWebsocketConsumer):
             {
                 "type": "chat_message",
                 "message": message,
-                "username": username,
-                "full_name": f"{self.scope['user'].first_name.capitalize()} {self.scope['user'].last_name.upper()}",
+                "full_name": full_name,
                 "message_id": db_message.id,
             },
         )
 
     async def chat_message(self, event):
         message = event["message"]
-        username = event["username"]
+        full_name = event["full_name"]
         message_id = event["message_id"]
+
+        # Send message to WebSocket
         full_name = event["full_name"]
 
         # Send message to WebSocket
@@ -61,7 +62,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 {
                     "message": message,
                     "message_id": message_id,
-                    "username": username,
                     "full_name": full_name,
                 }
             )
@@ -80,12 +80,15 @@ class ChatConsumer(AsyncWebsocketConsumer):
             pass
 
     @database_sync_to_async
-    def save_message(self, room_id, username, message):
+    def save_message(self, room_id, full_name, message):
         room = ChatRoom.objects.get(id=room_id)
-        user = User.objects.get(username=username)
         try:
-            return Message.objects.get(room=room, user=user, content=message)
+            return Message.objects.get(room=room, full_name=full_name, content=message)
         except Message.MultipleObjectsReturned:
-            return Message.objects.filter(room=room, user=user, content=message).first()
+            return Message.objects.filter(
+                room=room, full_name=full_name, content=message
+            ).first()
         except Message.DoesNotExist:
-            return Message.objects.create(room=room, user=user, content=message)
+            return Message.objects.create(
+                room=room, full_name=full_name, content=message
+            )

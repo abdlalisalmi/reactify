@@ -18,7 +18,7 @@ class ChatRoom(models.Model):
     description = models.TextField(blank=True)
     image = models.ImageField(upload_to="chat_rooms", blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    participants = models.ManyToManyField(User, related_name="chat_rooms", blank=True)
+    # participants = models.ManyToManyField(User, related_name="chat_rooms", blank=True)
     is_active = models.BooleanField(default=True)
 
     class Meta:
@@ -34,7 +34,8 @@ class Message(models.Model):
     room = models.ForeignKey(
         ChatRoom, related_name="messages", on_delete=models.CASCADE
     )
-    user = models.ForeignKey(User, related_name="messages", on_delete=models.CASCADE)
+    # user = models.ForeignKey(User, related_name="messages", on_delete=models.CASCADE)
+    full_name = models.CharField(max_length=100)
     content = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
 
@@ -44,7 +45,7 @@ class Message(models.Model):
         verbose_name_plural = "Messages"
 
     def __str__(self):
-        return f"{self.user.username}: {self.content[:20]}"
+        return f"{self.full_name}: {self.content[:20]}"
 
 
 # class Reaction(models.Model):

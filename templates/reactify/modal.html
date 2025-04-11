@@ -1,0 +1,99 @@
+
+<!-- Modal Backdrop -->
+<div id="modalBackdrop" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-10">
+<!-- Modal Container -->
+<div id="modal" class="bg-white rounded-lg shadow-xl w-full max-w-md mx-4 overflow-hidden">
+	<!-- Modal Header -->
+	<div class="bg-gray-50 px-6 py-4 border-b">
+	<div class="flex items-center justify-end">
+		<button id="closeModalBtn" class="text-gray-400 hover:text-gray-500">
+		<svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+			<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+		</svg>
+		</button>
+	</div>
+	</div>
+	
+	<!-- Modal Body -->
+	<div class="px-6 py-4">
+	<form id="userForm">
+		<div class="mb-4">
+		{% comment %} <label for="fullName" class="block text-sm font-medium text-gray-700 mb-1">Full Name</label> {% endcomment %}
+		<input 
+			type="text" 
+			id="fullName" 
+			name="fullName" 
+			class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none placeholder:text-sm"
+			placeholder="Enter your full name"
+			required
+		>
+		</div>
+		
+		<!-- Modal Footer -->
+		<div class="flex justify-end gap-2 mt-6">
+		<button 
+			id="submitBtn" 
+			class="px-4 py-2 bg-indigo-500 text-white rounded-md hover:bg-indigo-600 transition-colors text-sm"
+		>
+			Submit
+		</button>
+		</div>
+	</form>
+	</div>
+</div>
+</div>
+
+<script>
+// DOM Elements
+const openModalBtn = document.getElementById('openModalBtn');
+const closeModalBtn = document.getElementById('closeModalBtn');
+const modalBackdrop = document.getElementById('modalBackdrop');
+const submitBtn = document.getElementById('submitBtn');
+
+// Open Modal
+function openModal() {
+	modalBackdrop.classList.remove('hidden');
+	// Add animation classes
+	modalBackdrop.classList.add('animate-fadeIn');
+	modal.classList.add('animate-slideIn');
+	
+	// Focus on the input field
+	setTimeout(() => {
+	document.getElementById('fullName').focus();
+	}, 100);
+}
+
+// Close Modal
+function closeModal() {
+	modalBackdrop.classList.add('hidden');
+	// Reset form
+	userForm.reset();
+}
+
+function setFullNameInLocalStorage(fullName) {
+	// Store the full name in local storage
+	localStorage.setItem('fullName', fullName);
+}
+
+// Event Listeners
+openModalBtn.addEventListener('click', openModal);
+closeModalBtn.addEventListener('click', closeModal);
+
+// Close modal when clicking outside
+modalBackdrop.addEventListener('click', (e) => {
+	if (e.target === modalBackdrop) {
+	closeModal();
+	}
+});
+
+submitBtn.addEventListener('click', (e) => {
+	e.preventDefault();
+	const fullName = document.getElementById('fullName').value;
+	setFullNameInLocalStorage(fullName);
+	closeModal();
+	window.location.reload();
+});
+
+
+
+</script>

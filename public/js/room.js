@@ -3,6 +3,10 @@ document.addEventListener("DOMContentLoaded", () => {
   const sendMessageBtn = document.getElementById("send-message");
   const messageTextInput = document.getElementById("msg-input");
   const reactionButtons = document.querySelectorAll(".reaction-btn");
+  const authModalBtn = document.getElementById("openModalBtn");
+  const inputContainer = document.getElementById("input-container");
+
+  var fullName = localStorage.getItem("fullName") || "Anonymous";
 
   const roomId = JSON.parse(document.getElementById("room-id").textContent);
   const WS_PROTOCOL =
@@ -26,12 +30,26 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   function sendMessage(text) {
+    const textTrimed = messageTextInput.value.trim().slice(0, 50);
     chatSocket.send(
       JSON.stringify({
-        message: text,
+        message: textTrimed,
+        full_name: fullName,
       })
     );
   }
+
+  function handleAuth() {
+    console.log(fullName);
+    if (!fullName || fullName === "Anonymous") {
+      authModalBtn.style.display = "block";
+      inputContainer.style.display = "none";
+    } else {
+      inputContainer.style.display = "block";
+      authModalBtn.style.display = "none";
+    }
+  }
+  handleAuth();
 
   // Array of colors for custom text bubbles
   const bubbleColors = [
@@ -241,7 +259,7 @@ document.addEventListener("DOMContentLoaded", () => {
     reactionButtons.forEach((button) => {
       button.addEventListener("click", () => {
         const reaction = button.getAttribute("data-reaction");
-        createBubble(USERNAME, reaction);
+        createBubble("", reaction);
 
         // Button press effect
         button.classList.add("scale-95");
@@ -287,4 +305,6 @@ document.addEventListener("DOMContentLoaded", () => {
   if (messageTextInput) {
     messageTextInput.focus();
   }
+
+  // Handle non-autenticated users
 });
