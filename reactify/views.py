@@ -19,9 +19,13 @@ def index(request):
     # ):
     #     chat_room.participants.add(request.user)
 
-    messages = chat_room.messages.all().order_by("timestamp")
+    messages = (
+        chat_room.messages.all().order_by("timestamp").values("full_name", "content")
+    )
     return render(
-        request, "reactify/room.html", {"chat_room": chat_room, "messages": messages}
+        request,
+        "reactify/room.html",
+        {"chat_room": chat_room, "messages": list(messages)},
     )
 
 

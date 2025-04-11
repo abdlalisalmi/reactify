@@ -6,6 +6,21 @@ document.addEventListener("DOMContentLoaded", () => {
   const authModalBtn = document.getElementById("openModalBtn");
   const inputContainer = document.getElementById("input-container");
 
+  //   display message
+  var messages = JSON.parse(document.getElementById("messages").textContent);
+  let index = 0;
+
+  const interval = setInterval(() => {
+    if (index < messages.length) {
+      const msg = messages[index];
+      const sanitizedContent = DOMPurify.sanitize(msg.content);
+      createBubble(msg.full_name, sanitizedContent);
+      index++;
+    } else {
+      index = 0; // Reset index to loop through messages again
+    }
+  }, 1000); // every second
+
   var fullName = localStorage.getItem("fullName") || "Anonymous";
 
   const roomId = JSON.parse(document.getElementById("room-id").textContent);
@@ -31,6 +46,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function sendMessage(text) {
     const textTrimed = messageTextInput.value.trim().slice(0, 50);
+    messages.push({ full_name: fullName, content: textTrimed });
     chatSocket.send(
       JSON.stringify({
         message: textTrimed,
@@ -118,14 +134,15 @@ document.addEventListener("DOMContentLoaded", () => {
         : -size
     }px`;
 
+    const sanitizedContent = DOMPurify.sanitize(text);
     // First add text content
     if (isReaction) {
       bubble.innerHTML = `<div class="bubble flex justify-center items-center w-16 h-16 rounded-full text-xl ${bgColor} ${textColor} ${floatClass}">
-      ${text}
+      ${sanitizedContent}
     </div>`;
     } else if (text.startsWith("#")) {
       bubble.innerHTML = `<div class="bubble flex justify-center items-center rounded-xl px-3 py-1 text-sm ${bgColor} ${textColor} ${floatClass}">
-      ${text}
+      ${sanitizedContent}
     </div>`;
     } else {
       // For regular messages
@@ -139,7 +156,7 @@ document.addEventListener("DOMContentLoaded", () => {
       <!-- User Info -->
       <div class="flex flex-col">
       <span class="font-semibold text-md text-gray-900">${username}</span>
-      <span class="text-gray-500 text-sm">${text}</span>
+      <span class="text-gray-500 text-sm">${sanitizedContent}</span>
       </div>
     </div>`;
     }
