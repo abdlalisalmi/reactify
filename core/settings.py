@@ -121,7 +121,7 @@ CSRF_TRUSTED_ORIGINS = [
     "http://localhost",
     "http://10.25.1.244",
     "https://10.25.1.244",
-    # "https://react.1337.ma",
+    "https://react.1337.ma",
 ]
 
 
