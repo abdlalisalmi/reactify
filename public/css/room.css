@@ -1,0 +1,124 @@
+/* .bubble {
+	position: absolute;
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
+	font-weight: 600;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+	cursor: pointer;
+	user-select: none;
+	transition: transform 0.2s ease;
+}
+
+.bubble:hover {
+	transform: scale(1.1);
+} */
+
+.input-container {
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	z-index: 10;
+}
+
+.reactions-container {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 1rem;
+	justify-content: center;
+	margin-bottom: 0.75rem;
+}
+
+.reaction-btn {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 3.3rem;
+	height: 3.3rem;
+	border-radius: 50%;
+	font-weight: 500;
+	font-size: 22px;
+	cursor: pointer;
+	transition: all 0.2s ease;
+	/* border: 1px solid #e5e7eb; */
+}
+
+.reaction-btn:hover {
+	transform: translateY(-2px);
+}
+
+.hashtag {
+	border-radius: 8px;
+	background-color: #f5f5f5;
+	width: fit-content;
+	height: fit-content;
+	padding: 5px 5px;
+	font-size: 14px;
+}
+
+.bubble {
+	cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg'  width='40' height='48' viewport='0 0 100 100' style='fill:black;font-size:24px;'><text y='50%'>📌</text></svg>") 16 0, auto !important;
+	/*!emojicursor.app*/
+}
+
+/* Bubble pop animation */
+.pop {
+	animation: pop 0.4s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
+}
+
+@keyframes pop {
+	50% {
+		transform: scale(1.5, 1.5);
+		opacity: 0;
+	}
+
+	99% {
+		transform: scale(0.001, 0.001);
+		opacity: 0;
+	}
+
+	100% {
+		transform: scale(0.001, 0.001);
+		opacity: 1;
+	}
+}
+
+/* Floating animation */
+@keyframes float-left {
+	0% {
+		transform: translateX(0);
+	}
+
+	50% {
+		transform: translateX(-10px);
+	}
+
+	100% {
+		transform: translateX(0);
+	}
+}
+
+@keyframes float-right {
+	0% {
+		transform: translateX(0);
+	}
+
+	50% {
+		transform: translateX(10px);
+	}
+
+	100% {
+		transform: translateX(0);
+	}
+}
+
+.float-left {
+	animation: float-left 3s ease-in-out infinite;
+}
+
+.float-right {
+	animation: float-right 3s ease-in-out infinite;
+}

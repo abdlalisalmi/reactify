@@ -11,7 +11,7 @@ UNFOLD = {
     "SITE_HEADER": "Reactify",
     "SITE_URL": "/",
     # "SITE_ICON": lambda request: "https://res.cloudinary.com/djr3obtg6/image/upload/v1710331091/logo_avd7to.png",
-    "SITE_SYMBOL": "local_dining",  # symbol from icon set
+    "SITE_SYMBOL": "favorite",  # symbol from icon set
     # "LOGIN": {
     #     "image": lambda r: "https://i.imgur.com/aIkz2KI.png",
     # },
@@ -28,15 +28,15 @@ UNFOLD = {
                         "link": reverse_lazy("admin:index"),
                         "permission": lambda request: request.user.is_staff,
                     },
-                    # {
-                    #     "title": _("My Profile"),
-                    #     "icon": "person",
-                    #     "link": lambda request: reverse_lazy(
-                    #         "admin:cantina_profile_change",
-                    #         args=[request.user.id],
-                    #     ),
-                    #     "permission": lambda request: request.user.is_staff,
-                    # },
+                    {
+                        "title": _("My Profile"),
+                        "icon": "person",
+                        "link": lambda request: reverse_lazy(
+                            "admin:reactify_profile_change",
+                            args=[request.user.id],
+                        ),
+                        "permission": lambda request: request.user.is_staff,
+                    },
                 ],
             },
             {
@@ -44,7 +44,7 @@ UNFOLD = {
                 "separator": True,  # Top border
                 "items": [
                     {
-                        "title": _("Admins"),
+                        "title": _("Users"),
                         "icon": "admin_panel_settings",
                         "link": reverse_lazy("admin:auth_user_changelist"),
                         "permission": lambda request: has_permission(
@@ -61,41 +61,28 @@ UNFOLD = {
                     },
                 ],
             },
+            {
+                "title": _("Content Management"),
+                "separator": True,  # Top border
+                "items": [
+                    {
+                        "title": _("Chat Rooms"),
+                        "icon": "chat",
+                        "link": reverse_lazy("admin:reactify_chatroom_changelist"),
+                        "permission": lambda request: has_permission(
+                            request, "reactify", "chatroom"
+                        ),
+                    },
+                    {
+                        "title": _("Messages"),
+                        "icon": "forum",
+                        "link": reverse_lazy("admin:reactify_message_changelist"),
+                        "permission": lambda request: has_permission(
+                            request, "reactify", "message"
+                        ),
+                    },
+                ],
+            },
         ],
     },
-    # "TABS": [
-    #     {
-    #         "models": [
-    #             "manager.breakfast",
-    #             "manager.lunch",
-    #             "manager.dinner",
-    #         ],
-    #         "items": [
-    #             {
-    #                 "title": _("Breakfasts"),
-    #                 "icon": "bakery_dining",  # Supported icon set: https://fonts.google.com/icons
-    #                 "link": reverse_lazy("admin:manager_breakfast_changelist"),
-    #                 "permission": lambda request: has_permission(
-    #                     request, "manager", "breakfast"
-    #                 ),
-    #             },
-    #             {
-    #                 "title": _("Lunches"),
-    #                 "icon": "fastfood",  # Supported icon set: https://fonts.google.com/icons
-    #                 "link": reverse_lazy("admin:manager_lunch_changelist"),
-    #                 "permission": lambda request: has_permission(
-    #                     request, "manager", "lunch"
-    #                 ),
-    #             },
-    #             {
-    #                 "title": _("Dinners"),
-    #                 "icon": "dinner_dining",  # Supported icon set: https://fonts.google.com/icons
-    #                 "link": reverse_lazy("admin:manager_dinner_changelist"),
-    #                 "permission": lambda request: has_permission(
-    #                     request, "manager", "dinner"
-    #                 ),
-    #             },
-    #         ],
-    #     },
-    # ],
 }

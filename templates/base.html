@@ -1,0 +1,36 @@
+{% load static %}
+{% load i18n %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Reactify{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+	{% comment %} <script src="https://unpkg.com/framer-motion@10.16.4/dist/framer-motion.js"></script> {% endcomment %}
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap">
+	<script>
+		tailwind.config = {
+		theme: {
+			extend: {
+			fontFamily: {
+				sans: ['Inter', 'sans-serif'],
+			},
+			},
+		},
+		}
+	</script>
+
+	{% block extra_head %}{% endblock extra_head %}
+	
+</head>
+{% comment %} <body class=" w-full h-screen" style="background-image: url('{% static 'images/bg.png' %}');"> {% endcomment %}
+<body class=" w-full h-screen">
+    
+    {% comment %} <main class="h-screen w-full flex flex-col justify-center items-center backdrop-filter backdrop-blur-[8px] rounded-lg p-8 text-white"> {% endcomment %}
+    <main class="h-screen w-full">
+        {% block content %}{% endblock %}
+    </main>
+
+</body>
+</html>

@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Reactify - {{ chat_room.name }}{% endblock %}
+
+{% block extra_head %}
+<script src="{% static 'js/room.js' %}"></script>
+<link rel="stylesheet" href="{% static 'css/room.css' %}">
+{% endblock extra_head %}
+
+{% block content %}
+{% if chat_room %}
+<section class="">
+  <!-- Bubble Container -->
+  <div id="bubble-container" class="w-full h-[100vh] bg-gradient-to-b from-indigo-50 to-white overflow-hidden relative">
+    <!-- Bubbles will be added here by JavaScript -->
+  </div>
+  
+  <!-- Input Container -->
+  {% comment %} {% if request.user.is_authenticated %} {% endcomment %}
+
+  <div class="input-container {% if not request.user.is_authenticated %} hidden {% endif %}">
+    <div class="max-w-2xl mx-auto py-4 px-8 mb-4">
+		<!-- Reactions -->
+		<div class="flex flex-col gap-4 justify-center mb-4">
+			<div class="flex gap-2 justify-center">
+				<button class="reaction-btn bg-red-50 text-red-500 hover:bg-red-100 border border-red-100" data-reaction="❤️">
+				❤️
+				</button>
+				<button class="reaction-btn bg-blue-50 text-blue-500 hover:bg-blue-100 border border-blue-100" data-reaction="👍">
+				👍
+				</button>
+				<button class="reaction-btn bg-yellow-50 text-yellow-600 hover:bg-yellow-100 border border-yellow-100" data-reaction="😄">
+				😄
+				</button>
+				<button class="reaction-btn bg-green-50 text-green-500 hover:bg-green-100 border border-green-100" data-reaction="😮">
+				😮
+				</button>
+				<button class="reaction-btn bg-pink-50 text-pink-500 hover:bg-pink-100 border border-pink-100" data-reaction="🎉">
+				🎉
+				</button>
+				<button class="reaction-btn bg-orange-50 text-orange-500 hover:bg-orange-100 border border-orange-100" data-reaction="🔥">
+				🔥
+				</button>
+			</div>
+			<div class="flex gap-2 justify-center">
+				<button class="reaction-btn hashtag bg-orange-50 text-orange-500 hover:bg-orange-100 border border-orange-100" data-reaction="#YouCode">
+				#YouCode
+				</button>
+				<button class="reaction-btn hashtag bg-green-50 text-green-500 hover:bg-green-100 border border-green-100" data-reaction="#Congrats">
+				#Congrats
+				</button>
+				<button class="reaction-btn hashtag bg-red-50 text-red-500 hover:bg-red-100 border border-red-100" data-reaction="#YouDidIt">
+				#YouDidIt
+				</button>
+				<button class="reaction-btn hashtag bg-blue-50 text-blue-500 hover:bg-blue-100 border border-blue-100" data-reaction="#ProudMoment">
+				#ProudMoment
+				</button>
+				<button class="reaction-btn hashtag bg-yellow-50 text-yellow-600 hover:bg-yellow-100 border border-yellow-100" data-reaction="#WeMadeIt">
+				#WeMadeIt
+				</button>
+			</div>
+		</div>
+      
+      	<!-- Input field -->
+      	<div class="flex gap-2">
+			<div class="relative w-full">
+			<input type="text" id="msg-input" placeholder="leave a message..." class="flex-grow w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-indigo-400 bg-white text-gray-800 placeholder:text-sm">
+				<span class="absolute top-1/2 right-4 -translate-y-[45%]">
+				<button id="send-message" class="bg-indigo-500 hover:bg-indigo-600 text-white py-1 px-2 rounded-lg transition-colors">
+					<svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-send-2"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4.698 4.034l16.302 7.966l-16.302 7.966a.503 .503 0 0 1 -.546 -.124a.555 .555 0 0 1 -.12 -.568l2.468 -7.274l-2.468 -7.274a.555 .555 0 0 1 .12 -.568a.503 .503 0 0 1 .546 -.124z" /><path d="M6.5 12h14.5" /></svg>
+					</button>
+				</span>
+			</div>
+		</div>
+	</div>
+      </div>
+    </div>
+  </div>
+  {% comment %} {% endif %} {% endcomment %}
+
+{{ chat_room.id|json_script:"room-id" }}
+</section>
+
+{% else %}
+<section class="flex flex-col items-center justify-center h-screen">
+	<div class="flex flex-col items-center justify-center text-gray-500">
+		<svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+			<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+		</svg>
+		<p class="mt-2 text-sm font-medium">No channels available</p>
+		<p class="mt-1 text-xs">Automatic check for new channels in:</p>
+		{% comment %} reload the page every 5 seconds {% endcomment %}
+		<p class="mt-1 text-xs" >
+			
+			<span id="timer">5</span>
+		</p>
+		<script>
+			const timer = document.getElementById("timer");
+			let count = 5;
+			let interval = setInterval(() => {
+				count--;
+				timer.textContent = count;
+				if (count === 0) {
+					clearInterval(interval);
+					location.reload();
+				}
+			}, 1000); // Added 1000 milliseconds (1 second) interval
+		</script>
+	</div>
+</section>
+
+{% endif %}
+{% endblock %}
+
+
+
+
+
+

@@ -1,0 +1,39 @@
+services:
+  nginx: 
+    container_name: "reactify_nginx"
+    restart: unless-stopped
+    image: nginx:1.23.3
+    ports:
+      - 80:80
+      # - 443:443
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+      # - /etc/ssl:/etc/ssl
+    depends_on:
+      - reactify
+  reactify:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: reactify_app
+    entrypoint: sh entrypoint.dev.sh
+    volumes:
+      - .:/app  # Mount the current directory
+    ports:
+      - 8000
+    env_file:
+      - .env  # Load environment variables from .env file
+    depends_on:
+      - database
+
+  database:
+    image: postgres:16.0
+    restart: unless-stopped
+    container_name: reactify_db
+    env_file:
+      - .env  # Load environment variables from .env file
+    volumes:
+      - postgres_data_prod:/var/lib/postgresql/data/
+
+volumes:
+  postgres_data_prod:
