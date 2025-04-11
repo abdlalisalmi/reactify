@@ -14,6 +14,13 @@ DEBUG = os.environ.get("DEBUG", "False") == "True"
 
 ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "").split(",")
 
+CSRF_COOKIE_SECURE = True
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost",
+    "http://10.25.1.244",
+    "https://10.25.1.244",
+]
+
 
 # -----------------------------------------------
 # APPLICATION CONFIGURATION
