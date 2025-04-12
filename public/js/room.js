@@ -39,6 +39,10 @@ document.addEventListener("DOMContentLoaded", () => {
   chatSocket.onmessage = function (e) {
     const data = JSON.parse(e.data);
     createBubble(data.full_name, data.message, null, true);
+    messages.push({
+      full_name: data.full_name,
+      content: data.message,
+    });
   };
 
   chatSocket.onclose = function (e) {
