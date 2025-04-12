@@ -4,6 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const messageTextInput = document.getElementById("msg-input");
   const reactionButtons = document.querySelectorAll(".reaction-btn");
   const authModalBtn = document.getElementById("openModalBtn");
+  const qrCodes = document.querySelectorAll(".qr-code");
   const inputContainer = document.getElementById("input-container");
 
   //   display message
@@ -56,13 +57,18 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function handleAuth() {
-    console.log(fullName);
     if (!fullName || fullName === "Anonymous") {
       authModalBtn.style.display = "block";
       inputContainer.style.display = "none";
+      qrCodes.forEach((qrCode) => {
+        qrCode.style.display = "block";
+      });
     } else {
       inputContainer.style.display = "block";
       authModalBtn.style.display = "none";
+      qrCodes.forEach((qrCode) => {
+        qrCode.style.display = "none";
+      });
     }
   }
   handleAuth();

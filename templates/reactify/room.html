@@ -19,10 +19,16 @@
   <!-- Input Container -->
 
   <!-- Modal Trigger Button -->
-  <div class="flex justify-center absolute bottom-4 left-1/2 transform -translate-x-1/2">
-	  <button id="openModalBtn" class="bg-blue-500 hover:bg-blue-600 text-white text-sm py-2 px-4 rounded-lg transition-colors">
-		Share Your Testimonial
+  	<div class="flex justify-center absolute bottom-4 left-1/2 transform -translate-x-1/2 ">
+	  	<button id="openModalBtn" class="bg-blue-500 hover:bg-blue-600 text-white text-sm py-2 px-4 rounded-lg transition-colors">
+			Share Your Testimonial
 		</button>
+	</div>
+	<div class="absolute bottom-[0px] right-[10px] qr-code">
+		<img class="max-w-[90px] mx-auto bg-white rounded-lg md:max-w-[160px]" src="{% static 'images/qrcode.jpeg' %}" class="" />
+	</div>
+	<div class="absolute bottom-[0px] left-[10px] qr-code">
+		<img class="max-w-[90px] mx-auto bg-white rounded-lg md:max-w-[160px]" src="{% static 'images/qrcode.jpeg' %}" class="" />
 	</div>
 
   {% include "reactify/modal.html" %}
